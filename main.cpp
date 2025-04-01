@@ -312,28 +312,30 @@ int main(void)
 prompt:
 	options::printInstructions();
 	string choice = fetch_input(global_vars::INSTRUCTION_PROMPT, global_vars::OPTIONS);
-	int choosen_option = (int)choice[0];
+	int chosen_option = (int)choice[0];
 
-	if (choosen_option == options::actions::check)
+	if (chosen_option == options::actions::check)
 	{
 		display_all(application_list);
 	}
 
-	if (choosen_option == options::actions::write)
+	else if (chosen_option == options::actions::write)
 	{
 		prompt_create_note(application_list);
 	}
 	
-	if (choosen_option == options::actions::remove)
+	else if (chosen_option == options::actions::remove)
 	{
 		prompt_delete_note(application_list);
 	}
 
-	if (choosen_option == options::actions::exit)
+	else if (chosen_option == options::actions::exit)
 	{
 		store_manipulation::writeCSV(application_list, global_vars::CSV_FILE_NAME);
 		options::handleAction(15);
 	}
+
+	else goto prompt;
 
 	std::cout << "\x1b[1;33mPress c to continue.\x1b[0m\n";
 	string input = fetch_input("... ", { "c" });
