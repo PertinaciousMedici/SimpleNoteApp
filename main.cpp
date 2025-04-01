@@ -13,6 +13,9 @@
 #include <stdexcept>
 #include <cstdlib>
 #include <sstream>
+#define NOMINMAX
+#include <windows.h>
+#include <consoleapi2.h>
 #include <fstream>
 
 using std::string;
@@ -22,12 +25,12 @@ namespace global_vars
 {
 	const string CSV_FILE_NAME{ "note_store" };
 	const string INSTRUCTION_PROMPT{ "\x1b[1;33m[Choice]:\x1b[0m What would you like to do? " };
-	const vector<string> OPTIONS{"c", "w", "r", "e"};
+	const vector<string> OPTIONS{ "c", "w", "r", "e" };
 }
 
 namespace options
 {
-	
+
 	enum actions
 	{
 		check = 'c',
@@ -98,7 +101,7 @@ namespace utilities
 		{
 			std::cout << "\x1b[1;31m[ERROR]:\x1b[31m Invalid input! Number out of range.\x1b[0m\n";
 		}
-		
+
 		return _MAX_INTEGER;
 	}
 };
@@ -200,7 +203,7 @@ struct LinkedList
 			current = nullptr;
 			length--;
 		}
-		
+
 		sanitize_codes();
 	}
 
@@ -308,34 +311,33 @@ int main(void)
 {
 	ListPtr application_list = create_list();
 	store_manipulation::readCSV(application_list, global_vars::CSV_FILE_NAME);
-	
+	SetConsoleTitleA("Note Manager");
+
 prompt:
 	options::printInstructions();
 	string choice = fetch_input(global_vars::INSTRUCTION_PROMPT, global_vars::OPTIONS);
-	int chosen_option = (int)choice[0];
+	int choosen_option = (int)choice[0];
 
-	if (chosen_option == options::actions::check)
+	if (choosen_option == options::actions::check)
 	{
 		display_all(application_list);
 	}
 
-	else if (chosen_option == options::actions::write)
+	if (choosen_option == options::actions::write)
 	{
 		prompt_create_note(application_list);
 	}
-	
-	else if (chosen_option == options::actions::remove)
+
+	if (choosen_option == options::actions::remove)
 	{
 		prompt_delete_note(application_list);
 	}
 
-	else if (chosen_option == options::actions::exit)
+	if (choosen_option == options::actions::exit)
 	{
 		store_manipulation::writeCSV(application_list, global_vars::CSV_FILE_NAME);
 		options::handleAction(15);
 	}
-
-	else goto prompt;
 
 	std::cout << "\x1b[1;33mPress c to continue.\x1b[0m\n";
 	string input = fetch_input("... ", { "c" });
@@ -458,7 +460,7 @@ prompt:
 	{
 		std::cout << "\x1b[1;33m[Deletion]:\x1b[0m Note not found.\n";
 	}
-	
+
 	std::cout << "---------------------------------------" << '\n' << std::flush;
 }
 
